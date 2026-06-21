@@ -1,32 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
-  AGE_GROUPS,
   COUNTRIES,
-  LANGUAGES,
   NICHES,
   TOOLKIT_TOOLS,
-  type AgeGroup,
-  type AudienceTargeting,
   type Country,
-  type Language,
   type Niche,
   type PostingTimeRecommendation,
   type ToolkitResult,
   type ToolkitTool,
 } from "@/lib/types";
 import { getOpenAIClient } from "@/lib/ai/client";
-import { buildToolkitPrompt, parseAudienceInsights } from "@/lib/ai/prompts";
+import { buildToolkitPrompt } from "@/lib/ai/prompts";
 
 function isValidCountry(value: unknown): value is Country {
   return typeof value === "string" && COUNTRIES.includes(value as Country);
-}
-
-function isValidLanguage(value: unknown): value is Language {
-  return typeof value === "string" && LANGUAGES.includes(value as Language);
-}
-
-function isValidAgeGroup(value: unknown): value is AgeGroup {
-  return typeof value === "string" && AGE_GROUPS.includes(value as AgeGroup);
 }
 
 function isValidNiche(value: unknown): value is Niche {
@@ -61,19 +48,13 @@ function validateRecommendations(
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { tool, country, language, ageGroup, niche, topic = "" } = body;
+    const { tool, country, niche, topic = "" } = body;
 
     if (!isValidTool(tool)) {
       return NextResponse.json({ error: "Invalid tool selected" }, { status: 400 });
     }
     if (!isValidCountry(country)) {
       return NextResponse.json({ error: "Invalid country selected" }, { status: 400 });
-    }
-    if (!isValidLanguage(language)) {
-      return NextResponse.json({ error: "Invalid language selected" }, { status: 400 });
-    }
-    if (!isValidAgeGroup(ageGroup)) {
-      return NextResponse.json({ error: "Invalid age group selected" }, { status: 400 });
     }
     if (!isValidNiche(niche)) {
       return NextResponse.json({ error: "Invalid niche selected" }, { status: 400 });
@@ -85,9 +66,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const audience: AudienceTargeting = { country, language, ageGroup, niche };
     const openai = getOpenAIClient();
-    const prompt = buildToolkitPrompt(tool, audience, topic.trim());
+    const prompt = buildToolkitPrompt(tool, country, niche, topic.trim());
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o",
@@ -109,13 +89,11 @@ export async function POST(request: NextRequest) {
     }
 
     const parsed = JSON.parse(content) as Record<string, unknown>;
-    const insights = parseAudienceInsights(parsed);
-
     const result: ToolkitResult = {
       tool,
-      ...audience,
+      country,
+      niche,
       topic: topic.trim(),
-      ...insights,
     };
 
     if (tool === "posting-times") {
@@ -130,9 +108,11 @@ export async function POST(request: NextRequest) {
       if (!items) {
         return NextResponse.json({ error: "Invalid AI response format" }, { status: 500 });
       }
-      result.items = tool === "hashtags"
-        ? items.map((tag) => (tag.startsWith("#") ? tag : `#${tag}`))
-        : items;
+      if (tool === "hashtags") {
+        result.items = items.map((tag) => (tag.startsWith("#") ? tag : `#${tag}`));
+      } else {
+        result.items = items;
+      }
     }
 
     return NextResponse.json(result);

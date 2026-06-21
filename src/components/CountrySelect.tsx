@@ -20,7 +20,7 @@ export function CountrySelect({ value, onChange, disabled }: CountrySelectProps)
   return (
     <div className="space-y-2">
       <label htmlFor="country" className="block text-sm font-medium text-white/70">
-        Country
+        Target audience
       </label>
       <div className="relative">
         <select

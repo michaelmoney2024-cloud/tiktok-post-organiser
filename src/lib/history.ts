@@ -1,4 +1,4 @@
-import type { AnalysisResult, AgeGroup, Country, Language, Niche, ToolkitResult, UploadMediaType } from "./types";
+import type { AnalysisResult, Country, Niche, ToolkitResult, UploadMediaType } from "./types";
 
 export interface SavedAnalysis {
   id: string;
@@ -121,24 +121,9 @@ export function getHistoryPreview(item: SavedResult): string {
   return item.result.viralHook;
 }
 
-export function getHistoryMeta(item: SavedResult): {
-  country: Country;
-  language?: Language;
-  ageGroup?: AgeGroup;
-  niche: Niche;
-} {
+export function getHistoryMeta(item: SavedResult): { country: Country; niche: Niche } {
   if (item.source === "toolkit") {
-    return {
-      country: item.toolResult.country,
-      language: item.toolResult.language,
-      ageGroup: item.toolResult.ageGroup,
-      niche: item.toolResult.niche,
-    };
+    return { country: item.toolResult.country, niche: item.toolResult.niche };
   }
-  return {
-    country: item.result.country,
-    language: item.result.language,
-    ageGroup: item.result.ageGroup,
-    niche: item.result.niche,
-  };
+  return { country: item.result.country, niche: item.result.niche };
 }

@@ -20,38 +20,6 @@ export const NICHES = [
 
 export type Niche = (typeof NICHES)[number];
 
-export const LANGUAGES = [
-  "English",
-  "French",
-  "Spanish",
-  "Portuguese",
-  "Yoruba",
-  "Igbo",
-  "Hausa",
-  "Afrikaans",
-  "Zulu",
-] as const;
-
-export type Language = (typeof LANGUAGES)[number];
-
-export const AGE_GROUPS = [
-  "Gen Z (13-17)",
-  "Young Adults (18-24)",
-  "Millennials (25-34)",
-  "Adults (35-44)",
-  "45+",
-  "All Ages",
-] as const;
-
-export type AgeGroup = (typeof AGE_GROUPS)[number];
-
-export interface AudienceTargeting {
-  country: Country;
-  language: Language;
-  ageGroup: AgeGroup;
-  niche: Niche;
-}
-
 export interface ContentVariation {
   title: string;
   hook: string;
@@ -61,15 +29,11 @@ export interface ContentVariation {
 
 export interface AnalysisResult {
   country: Country;
-  language: Language;
-  ageGroup: AgeGroup;
   niche: Niche;
   viralHook: string;
   captions: string[];
   hashtags: string[];
   contentIdeas: string[];
-  audienceInsights?: string[];
-  engagementRecommendations?: string[];
   isVideoStrategy?: boolean;
   videoSummary?: string;
   keyMoments?: string[];
@@ -77,93 +41,6 @@ export interface AnalysisResult {
   thumbnailTexts?: string[];
   engagementTips?: string[];
   contentVariations?: ContentVariation[];
-  viralScore?: ViralScore;
-}
-
-export interface ViralScore {
-  overall: number;
-  hookStrength: number;
-  captionQuality: number;
-  hashtagRelevance: number;
-  audienceTargeting: number;
-  engagementPotential: number;
-  strengths: string[];
-  weaknesses: string[];
-  suggestions: string[];
-}
-
-export interface TrendingSound {
-  name: string;
-  category: string;
-  style: string;
-  whyItFits: string;
-  usageTip: string;
-}
-
-export interface TrendingSoundsResult {
-  country: Country;
-  niche: Niche;
-  audioCategories: string[];
-  musicStyles: string[];
-  sounds: TrendingSound[];
-}
-
-export interface StudioResult {
-  country: Country;
-  language: Language;
-  niche: Niche;
-  tiktokCaption: string;
-  instagramCaption: string;
-  youtubeShortsTitle: string;
-  youtubeDescription: string;
-  twitterPost: string;
-  facebookPost: string;
-  linkedinPost: string;
-}
-
-export type CalendarPostStatus = "draft" | "scheduled" | "posted";
-
-export interface CalendarPost {
-  id: string;
-  title: string;
-  caption: string;
-  hashtags: string[];
-  scheduledDate: string;
-  scheduledTime?: string;
-  status: CalendarPostStatus;
-  reminderEnabled: boolean;
-  createdAt: string;
-  postedAt?: string;
-  niche?: Niche;
-  country?: Country;
-}
-
-export interface GrowthSnapshot {
-  id: string;
-  date: string;
-  followers: number;
-  avgEngagement: number;
-  postsCount: number;
-}
-
-export interface CreatorGoal {
-  id: string;
-  type: "followers" | "engagement" | "posts";
-  target: number;
-  deadline: string;
-  createdAt: string;
-}
-
-export interface WeeklyReport {
-  weekStart: string;
-  weekEnd: string;
-  postsScheduled: number;
-  postsPublished: number;
-  followerChange: number;
-  avgEngagement: number;
-  topNiche: string;
-  highlights: string[];
-  recommendations: string[];
 }
 
 export type UploadMediaType = "image" | "video";
@@ -194,14 +71,10 @@ export interface PostingTimeRecommendation {
 export interface ToolkitResult {
   tool: ToolkitTool;
   country: Country;
-  language: Language;
-  ageGroup: AgeGroup;
   niche: Niche;
   topic: string;
   items?: string[];
   recommendations?: PostingTimeRecommendation[];
-  audienceInsights?: string[];
-  engagementRecommendations?: string[];
 }
 
 export const TOOLKIT_LABELS: Record<

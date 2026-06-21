@@ -5,7 +5,8 @@ import { UploadZone } from "@/components/UploadZone";
 import { LoadingOverlay } from "@/components/LoadingOverlay";
 import { ResultsPanel } from "@/components/ResultsPanel";
 import { VideoStrategyDashboard } from "@/components/VideoStrategyDashboard";
-import { AudienceTargetingPanel } from "@/components/AudienceTargetingPanel";
+import { CountrySelect } from "@/components/CountrySelect";
+import { NicheSelect } from "@/components/NicheSelect";
 import { AppNav } from "@/components/AppNav";
 import { SaveResultButton } from "@/components/SaveResultButton";
 import {
@@ -13,20 +14,11 @@ import {
   revokeKeyframeUrls,
   type KeyFrame,
 } from "@/lib/extract-video-keyframes";
-import type {
-  AgeGroup,
-  AnalysisResult,
-  Country,
-  Language,
-  MediaPreview,
-  Niche,
-} from "@/lib/types";
+import type { AnalysisResult, Country, MediaPreview, Niche } from "@/lib/types";
 
 export default function Home() {
   const [media, setMedia] = useState<MediaPreview | null>(null);
   const [country, setCountry] = useState<Country>("USA");
-  const [language, setLanguage] = useState<Language>("English");
-  const [ageGroup, setAgeGroup] = useState<AgeGroup>("All Ages");
   const [niche, setNiche] = useState<Niche>("Lifestyle");
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [keyFrames, setKeyFrames] = useState<KeyFrame[]>([]);
@@ -84,8 +76,6 @@ export default function Home() {
         }
         formData.append("frameLabels", JSON.stringify(frames.map((f) => f.label)));
         formData.append("country", country);
-        formData.append("language", language);
-        formData.append("ageGroup", ageGroup);
         formData.append("niche", niche);
 
         const response = await fetch("/api/analyze-video", {
@@ -104,8 +94,6 @@ export default function Home() {
         formData.append("file", media.file);
         formData.append("mediaType", media.type);
         formData.append("country", country);
-        formData.append("language", language);
-        formData.append("ageGroup", ageGroup);
         formData.append("niche", niche);
 
         const response = await fetch("/api/analyze", {
@@ -125,7 +113,7 @@ export default function Home() {
       setIsAnalyzing(false);
       setLoadingMessage("Analyzing your content...");
     }
-  }, [media, country, language, ageGroup, niche]);
+  }, [media, country, niche]);
 
   const isVideoResult = result?.isVideoStrategy;
 
@@ -157,17 +145,10 @@ export default function Home() {
         <AppNav />
 
         <main className="space-y-6">
-          <AudienceTargetingPanel
-            country={country}
-            language={language}
-            ageGroup={ageGroup}
-            niche={niche}
-            onCountryChange={setCountry}
-            onLanguageChange={setLanguage}
-            onAgeGroupChange={setAgeGroup}
-            onNicheChange={setNiche}
-            disabled={isAnalyzing}
-          />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <CountrySelect value={country} onChange={setCountry} disabled={isAnalyzing} />
+            <NicheSelect value={niche} onChange={setNiche} disabled={isAnalyzing} />
+          </div>
 
           <section className="relative">
             <UploadZone

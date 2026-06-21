@@ -146,16 +146,6 @@ export default function HistoryPage() {
                         <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-medium text-white/60">
                           {meta.country}
                         </span>
-                        {meta.language && (
-                          <span className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] font-medium text-white/50">
-                            {meta.language}
-                          </span>
-                        )}
-                        {meta.ageGroup && (
-                          <span className="rounded-full bg-[#fe2c55]/10 px-2 py-0.5 text-[10px] font-medium text-[#fe2c55]">
-                            {meta.ageGroup}
-                          </span>
-                        )}
                         <span className="rounded-full bg-[#25f4ee]/10 px-2 py-0.5 text-[10px] font-medium text-[#25f4ee]">
                           {meta.niche}
                         </span>
