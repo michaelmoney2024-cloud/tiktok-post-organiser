@@ -11,6 +11,21 @@ export const metadata: Metadata = {
   title: "TikTok Post Organizer",
   description:
     "Upload images or videos and get AI-generated TikTok captions, hashtags, and content ideas.",
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
+  openGraph: {
+    title: "TikTok Post Organizer",
+    description:
+      "Upload images or videos and get AI-generated TikTok captions, hashtags, and content ideas.",
+    images: [{ url: "/logo.png", width: 512, height: 512, alt: "TikTok Post Organizer" }],
+  },
+  twitter: {
+    card: "summary",
+    title: "TikTok Post Organizer",
+    images: ["/logo.png"],
+  },
 };
 
 export const viewport: Viewport = {

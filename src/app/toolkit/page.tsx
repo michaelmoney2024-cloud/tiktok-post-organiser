@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { AppNav } from "@/components/AppNav";
+import { AppHeader } from "@/components/AppHeader";
 import { CountrySelect } from "@/components/CountrySelect";
 import { NicheSelect } from "@/components/NicheSelect";
 import { ToolCard } from "@/components/ToolCard";
@@ -78,18 +79,11 @@ export default function ToolkitPage() {
       </div>
 
       <div className="relative mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
-        <header className="mb-8 text-center">
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-medium text-white/60">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#25f4ee]" />
-            Creator Toolkit
-          </div>
-          <h1 className="bg-gradient-to-r from-[#25f4ee] via-white to-[#fe2c55] bg-clip-text text-3xl font-bold tracking-tight text-transparent sm:text-4xl">
-            AI Creator Dashboard
-          </h1>
-          <p className="mt-2 text-sm text-white/50 sm:text-base">
-            6 AI-powered tools to grow your TikTok — captions, hooks, hashtags &amp; more
-          </p>
-        </header>
+        <AppHeader
+          badge="Creator Toolkit"
+          pageTitle="AI Creator Dashboard"
+          subtitle="6 AI-powered tools to grow your TikTok — captions, hooks, hashtags & more"
+        />
 
         <AppNav />
 

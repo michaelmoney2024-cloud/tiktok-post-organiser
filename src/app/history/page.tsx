@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { AppNav } from "@/components/AppNav";
+import { AppHeader } from "@/components/AppHeader";
+import { AppLogo } from "@/components/AppLogo";
 import { ResultsPanel } from "@/components/ResultsPanel";
 import { VideoStrategyDashboard } from "@/components/VideoStrategyDashboard";
 import { ToolkitResults } from "@/components/ToolkitResults";
@@ -56,14 +58,10 @@ export default function HistoryPage() {
       </div>
 
       <div className="relative mx-auto max-w-lg px-4 py-8 sm:max-w-xl sm:px-6 sm:py-12">
-        <header className="mb-2 text-center">
-          <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
-            History
-          </h1>
-          <p className="mt-2 text-sm text-white/50">
-            Your saved content &amp; toolkit generations
-          </p>
-        </header>
+        <AppHeader
+          pageTitle="History"
+          subtitle="Your saved content & toolkit generations"
+        />
 
         <AppNav />
 
@@ -71,10 +69,8 @@ export default function HistoryPage() {
           <div className="py-16 text-center text-sm text-white/40">Loading...</div>
         ) : history.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-white/10 bg-white/5 py-16 text-center">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/5 text-white/30">
-              <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+            <div className="mx-auto mb-4 flex justify-center opacity-40">
+              <AppLogo href="" className="opacity-40" />
             </div>
             <p className="text-sm font-medium text-white/60">No saved results yet</p>
             <p className="mt-1 text-xs text-white/40">
