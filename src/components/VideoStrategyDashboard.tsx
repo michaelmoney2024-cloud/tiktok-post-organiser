@@ -3,6 +3,8 @@
 import type { AnalysisResult } from "@/lib/types";
 import type { KeyFrame } from "@/lib/extract-video-keyframes";
 import { CopyButton } from "./CopyButton";
+import { AudienceBadges, AudienceInsightsPanel } from "./AudienceInsightsPanel";
+import { ViralScorePanel } from "./ViralScorePanel";
 
 interface VideoStrategyDashboardProps {
   result: AnalysisResult;
@@ -25,13 +27,13 @@ export function VideoStrategyDashboard({ result, keyFrames }: VideoStrategyDashb
 
   return (
     <div className="animate-fade-in space-y-5">
-      <div className="flex flex-wrap items-center justify-center gap-2">
-        <span className="rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-medium text-white/60">
-          {result.country}
-        </span>
-        <span className="rounded-full border border-[#25f4ee]/20 bg-[#25f4ee]/10 px-4 py-1.5 text-xs font-medium text-[#25f4ee]">
-          {result.niche}
-        </span>
+      <AudienceBadges
+        country={result.country}
+        language={result.language ?? "English"}
+        ageGroup={result.ageGroup ?? "All Ages"}
+        niche={result.niche}
+      />
+      <div className="flex justify-center">
         <span className="rounded-full border border-[#fe2c55]/20 bg-[#fe2c55]/10 px-4 py-1.5 text-xs font-medium text-[#fe2c55]">
           Video Strategy
         </span>
@@ -43,6 +45,13 @@ export function VideoStrategyDashboard({ result, keyFrames }: VideoStrategyDashb
         <StatCard label="Captions" value={String(result.captions.length)} />
         <StatCard label="Hashtags" value={String(result.hashtags.length)} />
       </div>
+
+      <AudienceInsightsPanel
+        audienceInsights={result.audienceInsights}
+        engagementRecommendations={result.engagementRecommendations}
+      />
+
+      {result.viralScore && <ViralScorePanel score={result.viralScore} />}
 
       {keyFrames && keyFrames.length > 0 && (
         <section className="rounded-xl border border-white/10 bg-white/5 p-4">

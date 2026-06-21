@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 import type { ToolkitResult } from "@/lib/types";
 import { TOOLKIT_LABELS } from "@/lib/types";
 import { CopyButton } from "./CopyButton";
+import { AudienceBadges, AudienceInsightsPanel } from "./AudienceInsightsPanel";
 import { saveToolkitToHistory } from "@/lib/history";
 
 interface ToolkitResultsProps {
@@ -29,17 +30,22 @@ export function ToolkitResults({ result, hideSave }: ToolkitResultsProps) {
 
   return (
     <div className="animate-fade-in space-y-4">
-      <div className="flex flex-wrap items-center justify-center gap-2">
-        <span className="rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-medium text-white/60">
-          {result.country}
-        </span>
-        <span className="rounded-full border border-[#25f4ee]/20 bg-[#25f4ee]/10 px-4 py-1.5 text-xs font-medium text-[#25f4ee]">
-          {result.niche}
-        </span>
+      <AudienceBadges
+        country={result.country}
+        language={result.language ?? "English"}
+        ageGroup={result.ageGroup ?? "All Ages"}
+        niche={result.niche}
+      />
+      <div className="flex justify-center">
         <span className="rounded-full border border-[#fe2c55]/20 bg-[#fe2c55]/10 px-4 py-1.5 text-xs font-medium text-[#fe2c55]">
           {meta.emoji} {meta.title}
         </span>
       </div>
+
+      <AudienceInsightsPanel
+        audienceInsights={result.audienceInsights}
+        engagementRecommendations={result.engagementRecommendations}
+      />
 
       {result.tool === "hashtags" && result.items && (
         <ResultSection title="Hashtags" copyText={result.items.join(" ")} copyLabel="Copy all">

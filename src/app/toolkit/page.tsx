@@ -2,15 +2,16 @@
 
 import { useCallback, useState } from "react";
 import { AppNav } from "@/components/AppNav";
-import { CountrySelect } from "@/components/CountrySelect";
-import { NicheSelect } from "@/components/NicheSelect";
+import { AudienceTargetingPanel } from "@/components/AudienceTargetingPanel";
 import { ToolCard } from "@/components/ToolCard";
 import { ToolkitResults } from "@/components/ToolkitResults";
 import { LoadingOverlay } from "@/components/LoadingOverlay";
 import {
   TOOLKIT_LABELS,
   TOOLKIT_TOOLS,
+  type AgeGroup,
   type Country,
+  type Language,
   type Niche,
   type ToolkitResult,
   type ToolkitTool,
@@ -19,6 +20,8 @@ import {
 export default function ToolkitPage() {
   const [selectedTool, setSelectedTool] = useState<ToolkitTool>("captions");
   const [country, setCountry] = useState<Country>("USA");
+  const [language, setLanguage] = useState<Language>("English");
+  const [ageGroup, setAgeGroup] = useState<AgeGroup>("All Ages");
   const [niche, setNiche] = useState<Niche>("Lifestyle");
   const [topic, setTopic] = useState("");
   const [result, setResult] = useState<ToolkitResult | null>(null);
@@ -51,6 +54,8 @@ export default function ToolkitPage() {
         body: JSON.stringify({
           tool: selectedTool,
           country,
+          language,
+          ageGroup,
           niche,
           topic: topic.trim(),
         }),
@@ -67,7 +72,7 @@ export default function ToolkitPage() {
     } finally {
       setIsGenerating(false);
     }
-  }, [selectedTool, country, niche, topic, needsTopic]);
+  }, [selectedTool, country, language, ageGroup, niche, topic, needsTopic]);
 
   return (
     <div className="min-h-full bg-[#0f0f0f]">
@@ -92,6 +97,18 @@ export default function ToolkitPage() {
         </header>
 
         <AppNav />
+
+        <AudienceTargetingPanel
+          country={country}
+          language={language}
+          ageGroup={ageGroup}
+          niche={niche}
+          onCountryChange={setCountry}
+          onLanguageChange={setLanguage}
+          onAgeGroupChange={setAgeGroup}
+          onNicheChange={setNiche}
+          disabled={isGenerating}
+        />
 
         <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:gap-4">
           {TOOLKIT_TOOLS.map((tool) => {
@@ -122,19 +139,6 @@ export default function ToolkitPage() {
               </div>
             </div>
 
-            <div className="mb-5 grid gap-4 sm:grid-cols-2">
-              <CountrySelect
-                value={country}
-                onChange={setCountry}
-                disabled={isGenerating}
-              />
-              <NicheSelect
-                value={niche}
-                onChange={setNiche}
-                disabled={isGenerating}
-              />
-            </div>
-
             {needsTopic && (
               <div className="mb-5">
                 <label
@@ -157,7 +161,7 @@ export default function ToolkitPage() {
 
             {!needsTopic && (
               <p className="mb-5 rounded-xl border border-[#25f4ee]/20 bg-[#25f4ee]/5 px-4 py-3 text-sm text-[#25f4ee]/80">
-                Posting time recommendations are based on your selected country and niche — no topic needed.
+                Posting time recommendations use your selected country, language, age group, and niche.
               </p>
             )}
 

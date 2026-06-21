@@ -2,6 +2,8 @@
 
 import type { AnalysisResult } from "@/lib/types";
 import { CopyButton } from "./CopyButton";
+import { AudienceBadges, AudienceInsightsPanel } from "./AudienceInsightsPanel";
+import { ViralScorePanel } from "./ViralScorePanel";
 
 interface ResultsPanelProps {
   result: AnalysisResult;
@@ -16,14 +18,19 @@ export function ResultsPanel({ result }: ResultsPanelProps) {
 
   return (
     <div className="animate-fade-in space-y-4">
-      <div className="flex flex-wrap items-center justify-center gap-2">
-        <span className="rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-medium text-white/60">
-          {result.country}
-        </span>
-        <span className="rounded-full border border-[#25f4ee]/20 bg-[#25f4ee]/10 px-4 py-1.5 text-xs font-medium text-[#25f4ee]">
-          {result.niche}
-        </span>
-      </div>
+      <AudienceBadges
+        country={result.country}
+        language={result.language ?? "English"}
+        ageGroup={result.ageGroup ?? "All Ages"}
+        niche={result.niche}
+      />
+
+      <AudienceInsightsPanel
+        audienceInsights={result.audienceInsights}
+        engagementRecommendations={result.engagementRecommendations}
+      />
+
+      {result.viralScore && <ViralScorePanel score={result.viralScore} />}
 
       <div className="rounded-xl border border-[#fe2c55]/30 bg-gradient-to-br from-[#fe2c55]/10 to-transparent p-4 sm:p-5">
         <div className="mb-3 flex items-center justify-between">
