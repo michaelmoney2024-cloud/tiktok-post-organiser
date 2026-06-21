@@ -1,13 +1,23 @@
 "use client";
 
-import type { AnalysisResult } from "@/lib/types";
+import type { AnalysisResult, UploadMediaType } from "@/lib/types";
 import { CopyButton } from "./CopyButton";
+import { PostOnTikTokPanel } from "./PostOnTikTokPanel";
+import { EnhancedMediaPreview } from "./EnhancedMediaPreview";
 
 interface ResultsPanelProps {
   result: AnalysisResult;
+  mediaPreviewUrl?: string;
+  enhancedMediaUrl?: string | null;
+  mediaType?: UploadMediaType;
 }
 
-export function ResultsPanel({ result }: ResultsPanelProps) {
+export function ResultsPanel({
+  result,
+  mediaPreviewUrl,
+  enhancedMediaUrl,
+  mediaType = "image",
+}: ResultsPanelProps) {
   const hashtagString = result.hashtags.join(" ");
   const captionsText = result.captions
     .map((caption, i) => `${i + 1}. ${caption}`)
@@ -16,6 +26,16 @@ export function ResultsPanel({ result }: ResultsPanelProps) {
 
   return (
     <div className="animate-fade-in space-y-4">
+      {result.finalPost && <PostOnTikTokPanel result={result} />}
+
+      {mediaPreviewUrl && (
+        <EnhancedMediaPreview
+          originalUrl={mediaPreviewUrl}
+          enhancedUrl={enhancedMediaUrl}
+          mediaType={mediaType}
+        />
+      )}
+
       <div className="flex flex-wrap items-center justify-center gap-2">
         <span className="rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-medium text-white/60">
           {result.country}
@@ -116,21 +136,23 @@ export function ResultsPanel({ result }: ResultsPanelProps) {
         </ol>
       </ResultCard>
 
-      <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-        <div className="mb-2 flex items-center justify-between">
-          <span className="text-xs font-medium uppercase tracking-wider text-white/40">
-            Ready-to-post
-          </span>
-          <CopyButton
-            text={fullPost}
-            label="Copy all"
-            className="bg-[#fe2c55]/20 text-[#fe2c55] hover:bg-[#fe2c55]/30"
-          />
+      {!result.finalPost && (
+        <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-medium uppercase tracking-wider text-white/40">
+              Ready-to-post
+            </span>
+            <CopyButton
+              text={fullPost}
+              label="Copy all"
+              className="bg-[#fe2c55]/20 text-[#fe2c55] hover:bg-[#fe2c55]/30"
+            />
+          </div>
+          <p className="whitespace-pre-wrap text-sm text-white/70">
+            {fullPost}
+          </p>
         </div>
-        <p className="whitespace-pre-wrap text-sm text-white/70">
-          {fullPost}
-        </p>
-      </div>
+      )}
     </div>
   );
 }

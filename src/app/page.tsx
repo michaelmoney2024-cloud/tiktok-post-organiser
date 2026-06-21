@@ -14,7 +14,63 @@ import {
   revokeKeyframeUrls,
   type KeyFrame,
 } from "@/lib/extract-video-keyframes";
+import {
+  enhanceImageForTikTok,
+  IMAGE_ENHANCEMENT_APPLIED,
+  VIDEO_ENHANCEMENT_TIPS,
+} from "@/lib/enhance-media";
 import type { AnalysisResult, Country, MediaPreview, Niche } from "@/lib/types";
+
+async function finalizeForTikTok(
+  data: AnalysisResult,
+  mediaType: "image" | "video",
+  file: File,
+): Promise<{ result: AnalysisResult; enhancedMediaUrl: string | null }> {
+  const finalizeRes = await fetch("/api/finalize-post", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      viralHook: data.viralHook,
+      captions: data.captions,
+      hashtags: data.hashtags,
+      country: data.country,
+      niche: data.niche,
+      mediaType,
+    }),
+  });
+
+  const finalized = await finalizeRes.json();
+  if (!finalizeRes.ok) {
+    throw new Error(finalized.error || "Failed to optimize for TikTok");
+  }
+
+  let enhancedMediaUrl: string | null = null;
+  let applied: string[] = [];
+
+  if (mediaType === "image") {
+    try {
+      enhancedMediaUrl = await enhanceImageForTikTok(file);
+      applied = IMAGE_ENHANCEMENT_APPLIED;
+    } catch {
+      // Image enhancement is best-effort
+    }
+  }
+
+  const apiTips = (finalized.mediaEnhancement?.tips as string[] | undefined) ?? [];
+  const tips =
+    mediaType === "video"
+      ? [...new Set([...apiTips, ...VIDEO_ENHANCEMENT_TIPS])]
+      : apiTips;
+
+  return {
+    result: {
+      ...data,
+      finalPost: finalized.finalPost,
+      mediaEnhancement: { tips, applied },
+    },
+    enhancedMediaUrl,
+  };
+}
 
 export default function Home() {
   const [media, setMedia] = useState<MediaPreview | null>(null);
@@ -25,6 +81,7 @@ export default function Home() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("Analyzing your content...");
   const [error, setError] = useState<string | null>(null);
+  const [enhancedMediaUrl, setEnhancedMediaUrl] = useState<string | null>(null);
 
   useEffect(() => {
     return () => {
@@ -35,6 +92,7 @@ export default function Home() {
   const handleMediaSelect = useCallback((preview: MediaPreview) => {
     setMedia(preview);
     setResult(null);
+    setEnhancedMediaUrl(null);
     setError(null);
     setKeyFrames((prev) => {
       if (prev.length > 0) revokeKeyframeUrls(prev);
@@ -50,6 +108,7 @@ export default function Home() {
     });
     setMedia(null);
     setResult(null);
+    setEnhancedMediaUrl(null);
     setError(null);
   }, [media]);
 
@@ -59,6 +118,7 @@ export default function Home() {
     setIsAnalyzing(true);
     setError(null);
     setResult(null);
+    setEnhancedMediaUrl(null);
 
     try {
       if (media.type === "video") {
@@ -87,7 +147,15 @@ export default function Home() {
         if (!response.ok) {
           throw new Error(data.error || "Video analysis failed");
         }
-        setResult(data as AnalysisResult);
+
+        setLoadingMessage("Ranking captions & optimizing for TikTok...");
+        const { result: optimized, enhancedMediaUrl: enhanced } = await finalizeForTikTok(
+          data as AnalysisResult,
+          "video",
+          media.file,
+        );
+        setEnhancedMediaUrl(enhanced);
+        setResult(optimized);
       } else {
         setLoadingMessage("Analyzing your content...");
         const formData = new FormData();
@@ -105,7 +173,15 @@ export default function Home() {
         if (!response.ok) {
           throw new Error(data.error || "Analysis failed");
         }
-        setResult(data as AnalysisResult);
+
+        setLoadingMessage("Ranking captions & optimizing for TikTok...");
+        const { result: optimized, enhancedMediaUrl: enhanced } = await finalizeForTikTok(
+          data as AnalysisResult,
+          "image",
+          media.file,
+        );
+        setEnhancedMediaUrl(enhanced);
+        setResult(optimized);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
@@ -126,7 +202,7 @@ export default function Home() {
 
       <div
         className={`relative mx-auto px-4 py-8 sm:px-6 sm:py-12 ${
-          isVideoResult ? "max-w-4xl" : "max-w-lg sm:max-w-xl"
+          isVideoResult || result?.finalPost ? "max-w-4xl" : "max-w-lg sm:max-w-xl"
         }`}
       >
         <header className="mb-8 text-center">
@@ -190,9 +266,20 @@ export default function Home() {
           {result && media && (
             <>
               {result.isVideoStrategy ? (
-                <VideoStrategyDashboard result={result} keyFrames={keyFrames} />
+                <VideoStrategyDashboard
+                  result={result}
+                  keyFrames={keyFrames}
+                  mediaPreviewUrl={media.previewUrl}
+                  enhancedMediaUrl={enhancedMediaUrl}
+                  mediaType={media.type}
+                />
               ) : (
-                <ResultsPanel result={result} />
+                <ResultsPanel
+                  result={result}
+                  mediaPreviewUrl={media.previewUrl}
+                  enhancedMediaUrl={enhancedMediaUrl}
+                  mediaType={media.type}
+                />
               )}
               <SaveResultButton result={result} media={media} />
               <button

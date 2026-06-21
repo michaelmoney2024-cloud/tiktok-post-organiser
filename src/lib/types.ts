@@ -41,6 +41,29 @@ export interface AnalysisResult {
   thumbnailTexts?: string[];
   engagementTips?: string[];
   contentVariations?: ContentVariation[];
+  finalPost?: FinalPost;
+  mediaEnhancement?: MediaEnhancement;
+}
+
+export interface RankedCaption {
+  index: number;
+  text: string;
+  engagementScore: number;
+  reason: string;
+}
+
+export interface MediaEnhancement {
+  tips: string[];
+  applied: string[];
+}
+
+export interface FinalPost {
+  rankedCaptions: RankedCaption[];
+  selectedCaptionIndex: number;
+  finalCaption: string;
+  finalHashtags: string[];
+  postOnTikTok: string;
+  cleanupNotes: string[];
 }
 
 export type UploadMediaType = "image" | "video";

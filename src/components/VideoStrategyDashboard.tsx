@@ -1,15 +1,26 @@
 "use client";
 
-import type { AnalysisResult } from "@/lib/types";
+import type { AnalysisResult, UploadMediaType } from "@/lib/types";
 import type { KeyFrame } from "@/lib/extract-video-keyframes";
 import { CopyButton } from "./CopyButton";
+import { PostOnTikTokPanel } from "./PostOnTikTokPanel";
+import { EnhancedMediaPreview } from "./EnhancedMediaPreview";
 
 interface VideoStrategyDashboardProps {
   result: AnalysisResult;
   keyFrames?: KeyFrame[];
+  mediaPreviewUrl?: string;
+  enhancedMediaUrl?: string | null;
+  mediaType?: UploadMediaType;
 }
 
-export function VideoStrategyDashboard({ result, keyFrames }: VideoStrategyDashboardProps) {
+export function VideoStrategyDashboard({
+  result,
+  keyFrames,
+  mediaPreviewUrl,
+  enhancedMediaUrl,
+  mediaType = "video",
+}: VideoStrategyDashboardProps) {
   const hashtagString = result.hashtags.join(" ");
   const hooks = result.viralHooks ?? [result.viralHook];
   const fullStrategy = [
@@ -25,6 +36,16 @@ export function VideoStrategyDashboard({ result, keyFrames }: VideoStrategyDashb
 
   return (
     <div className="animate-fade-in space-y-5">
+      {result.finalPost && <PostOnTikTokPanel result={result} />}
+
+      {mediaPreviewUrl && (
+        <EnhancedMediaPreview
+          originalUrl={mediaPreviewUrl}
+          enhancedUrl={enhancedMediaUrl}
+          mediaType={mediaType}
+        />
+      )}
+
       <div className="flex flex-wrap items-center justify-center gap-2">
         <span className="rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-medium text-white/60">
           {result.country}
