@@ -4,13 +4,17 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { AppNav } from "@/components/AppNav";
 import { ResultsPanel } from "@/components/ResultsPanel";
+import { ToolkitResults } from "@/components/ToolkitResults";
 import {
   clearHistory,
   deleteFromHistory,
   formatSavedDate,
   getHistory,
+  getHistoryMeta,
+  getHistoryPreview,
   type SavedResult,
 } from "@/lib/history";
+import { TOOLKIT_LABELS } from "@/lib/types";
 
 export default function HistoryPage() {
   const [history, setHistory] = useState<SavedResult[]>([]);
@@ -56,7 +60,7 @@ export default function HistoryPage() {
             History
           </h1>
           <p className="mt-2 text-sm text-white/50">
-            Your saved TikTok content results
+            Your saved content &amp; toolkit generations
           </p>
         </header>
 
@@ -73,14 +77,22 @@ export default function HistoryPage() {
             </div>
             <p className="text-sm font-medium text-white/60">No saved results yet</p>
             <p className="mt-1 text-xs text-white/40">
-              Generate content and tap Save Result to keep it here
+              Generate content and tap Save to keep it here
             </p>
-            <Link
-              href="/"
-              className="mt-6 inline-block rounded-xl bg-gradient-to-r from-[#fe2c55] to-[#ff0050] px-6 py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
-            >
-              Create content
-            </Link>
+            <div className="mt-6 flex justify-center gap-3">
+              <Link
+                href="/"
+                className="rounded-xl bg-gradient-to-r from-[#fe2c55] to-[#ff0050] px-5 py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
+              >
+                Create content
+              </Link>
+              <Link
+                href="/toolkit"
+                className="rounded-xl border border-white/10 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white/80 transition hover:bg-white/10"
+              >
+                Open toolkit
+              </Link>
+            </div>
           </div>
         ) : (
           <div className="space-y-4">
@@ -99,6 +111,12 @@ export default function HistoryPage() {
 
             {history.map((item) => {
               const isExpanded = expandedId === item.id;
+              const meta = getHistoryMeta(item);
+              const preview = getHistoryPreview(item);
+              const isToolkit = item.source === "toolkit";
+              const toolLabel = isToolkit
+                ? TOOLKIT_LABELS[item.toolResult.tool]
+                : null;
 
               return (
                 <article
@@ -110,26 +128,39 @@ export default function HistoryPage() {
                     onClick={() => setExpandedId(isExpanded ? null : item.id)}
                     className="flex w-full gap-3 p-3 text-left transition hover:bg-white/[0.03] sm:gap-4 sm:p-4"
                   >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={item.thumbnail}
-                      alt=""
-                      className="h-16 w-16 shrink-0 rounded-lg object-cover sm:h-20 sm:w-20"
-                    />
+                    {isToolkit ? (
+                      <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#fe2c55]/20 to-[#25f4ee]/20 text-2xl sm:h-20 sm:w-20">
+                        {toolLabel?.emoji}
+                      </div>
+                    ) : (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={item.thumbnail}
+                        alt=""
+                        className="h-16 w-16 shrink-0 rounded-lg object-cover sm:h-20 sm:w-20"
+                      />
+                    )}
                     <div className="min-w-0 flex-1">
                       <div className="mb-1.5 flex flex-wrap items-center gap-1.5">
                         <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-medium text-white/60">
-                          {item.result.country}
+                          {meta.country}
                         </span>
                         <span className="rounded-full bg-[#25f4ee]/10 px-2 py-0.5 text-[10px] font-medium text-[#25f4ee]">
-                          {item.result.niche}
+                          {meta.niche}
                         </span>
-                        <span className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] font-medium capitalize text-white/40">
-                          {item.mediaType}
-                        </span>
+                        {isToolkit && toolLabel && (
+                          <span className="rounded-full bg-[#fe2c55]/10 px-2 py-0.5 text-[10px] font-medium text-[#fe2c55]">
+                            {toolLabel.title}
+                          </span>
+                        )}
+                        {!isToolkit && (
+                          <span className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] font-medium capitalize text-white/40">
+                            {item.mediaType}
+                          </span>
+                        )}
                       </div>
                       <p className="line-clamp-2 text-sm font-medium text-white/90">
-                        {item.result.viralHook}
+                        {preview}
                       </p>
                       <p className="mt-1 text-xs text-white/40">
                         {formatSavedDate(item.savedAt)}
@@ -150,7 +181,11 @@ export default function HistoryPage() {
 
                   {isExpanded && (
                     <div className="border-t border-white/10 p-4 sm:p-5">
-                      <ResultsPanel result={item.result} />
+                      {isToolkit ? (
+                        <ToolkitResults result={item.toolResult} hideSave />
+                      ) : (
+                        <ResultsPanel result={item.result} />
+                      )}
                       <button
                         type="button"
                         onClick={() => handleDelete(item.id)}

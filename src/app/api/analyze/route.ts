@@ -107,7 +107,7 @@ function validateResult(data: unknown): data is Omit<AnalysisResult, "country" |
 }
 
 export async function POST(request: NextRequest) {
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey = process.env["OPENAI_API_KEY"];
   if (!apiKey) {
     return NextResponse.json(
       { error: "OpenAI API key is not configured. Add OPENAI_API_KEY to .env.local" },
