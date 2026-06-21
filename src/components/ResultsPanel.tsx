@@ -10,6 +10,7 @@ interface ResultsPanelProps {
   mediaPreviewUrl?: string;
   enhancedMediaUrl?: string | null;
   mediaType?: UploadMediaType;
+  mediaFile?: File;
 }
 
 export function ResultsPanel({
@@ -17,6 +18,7 @@ export function ResultsPanel({
   mediaPreviewUrl,
   enhancedMediaUrl,
   mediaType = "image",
+  mediaFile,
 }: ResultsPanelProps) {
   const hashtagString = result.hashtags.join(" ");
   const captionsText = result.captions
@@ -26,16 +28,6 @@ export function ResultsPanel({
 
   return (
     <div className="animate-fade-in space-y-4">
-      {result.finalPost && <PostOnTikTokPanel result={result} />}
-
-      {mediaPreviewUrl && (
-        <EnhancedMediaPreview
-          originalUrl={mediaPreviewUrl}
-          enhancedUrl={enhancedMediaUrl}
-          mediaType={mediaType}
-        />
-      )}
-
       <div className="flex flex-wrap items-center justify-center gap-2">
         <span className="rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-medium text-white/60">
           {result.country}
@@ -152,6 +144,23 @@ export function ResultsPanel({
             {fullPost}
           </p>
         </div>
+      )}
+
+      {mediaPreviewUrl && (
+        <EnhancedMediaPreview
+          originalUrl={mediaPreviewUrl}
+          enhancedUrl={enhancedMediaUrl}
+          mediaType={mediaType}
+        />
+      )}
+
+      {result.finalPost && (
+        <PostOnTikTokPanel
+          result={result}
+          mediaFile={mediaFile}
+          enhancedMediaUrl={enhancedMediaUrl}
+          mediaType={mediaType}
+        />
       )}
     </div>
   );

@@ -1,26 +1,10 @@
-export const COUNTRIES = [
-  "Nigeria",
-  "Canada",
-  "USA",
-  "UK",
-  "South Africa",
-] as const;
+import type { Country } from "@/lib/countries";
 
-export type Country = (typeof COUNTRIES)[number];
+export type { Country } from "@/lib/countries";
+export { COUNTRIES } from "@/lib/countries";
+export { SUGGESTED_NICHES } from "@/lib/audience";
 
-export const NICHES = [
-  "Comedy",
-  "Lifestyle",
-  "Business",
-  "Gaming",
-  "Fashion",
-  "Sports",
-  "Music",
-] as const;
-
-export type Niche = (typeof NICHES)[number];
-
-export interface ContentVariation {
+export type Niche = string;export interface ContentVariation {
   title: string;
   hook: string;
   caption: string;

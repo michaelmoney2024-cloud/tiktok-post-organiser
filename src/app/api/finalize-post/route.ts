@@ -1,22 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { isValidCountry, isValidNiche, normalizeNiche } from "@/lib/audience";
 import {
-  COUNTRIES,
-  NICHES,
   type AnalysisResult,
-  type Country,
   type FinalPost,
-  type Niche,
   type RankedCaption,
 } from "@/lib/types";
 import { getOpenAIClient } from "@/lib/ai/client";
-
-function isValidCountry(v: unknown): v is Country {
-  return typeof v === "string" && COUNTRIES.includes(v as Country);
-}
-
-function isValidNiche(v: unknown): v is Niche {
-  return typeof v === "string" && NICHES.includes(v as Niche);
-}
 
 function validateFinalPost(data: unknown): data is FinalPost {
   if (!data || typeof data !== "object") return false;
@@ -67,9 +56,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid audience data" }, { status: 400 });
     }
 
+    const nicheLabel = normalizeNiche(niche);
     const openai = getOpenAIClient();
 
-    const prompt = `You are a TikTok viral content optimizer for ${niche} creators in ${country}.
+    const prompt = `You are a TikTok viral content optimizer for ${nicheLabel} creators in ${country}.
 
 Analyze and rank these ${captions.length} caption options by engagement potential (watch time, saves, comments, shares).
 Also curate the best hashtags — remove duplicates, irrelevant tags, and reduce to 12-15 high-impact tags.
@@ -88,7 +78,7 @@ Tasks:
 2. Rank all captions (best first)
 3. Select the single best caption
 4. Clean the winning caption: remove excessive emojis (max 3), fix formatting, tighten prose
-5. Curate hashtags: deduplicate, remove irrelevant/generic tags, keep 12-15 best for ${country} ${niche}
+5. Curate hashtags: deduplicate, remove irrelevant/generic tags, keep 12-15 best for ${country} ${nicheLabel}
 6. Build final "Post On TikTok" text: hook line, blank line, cleaned caption, blank line, hashtags
 7. List cleanup actions taken
 

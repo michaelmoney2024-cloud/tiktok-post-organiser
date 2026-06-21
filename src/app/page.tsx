@@ -74,7 +74,7 @@ async function finalizeForTikTok(
 
 export default function Home() {
   const [media, setMedia] = useState<MediaPreview | null>(null);
-  const [country, setCountry] = useState<Country>("USA");
+  const [country, setCountry] = useState<Country>("United States");
   const [niche, setNiche] = useState<Niche>("Lifestyle");
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [keyFrames, setKeyFrames] = useState<KeyFrame[]>([]);
@@ -114,6 +114,11 @@ export default function Home() {
 
   const handleAnalyze = useCallback(async () => {
     if (!media) return;
+
+    if (!niche.trim() || niche.trim().length < 2) {
+      setError("Please enter a content niche (at least 2 characters)");
+      return;
+    }
 
     setIsAnalyzing(true);
     setError(null);
@@ -272,6 +277,7 @@ export default function Home() {
                   mediaPreviewUrl={media.previewUrl}
                   enhancedMediaUrl={enhancedMediaUrl}
                   mediaType={media.type}
+                  mediaFile={media.file}
                 />
               ) : (
                 <ResultsPanel
@@ -279,6 +285,7 @@ export default function Home() {
                   mediaPreviewUrl={media.previewUrl}
                   enhancedMediaUrl={enhancedMediaUrl}
                   mediaType={media.type}
+                  mediaFile={media.file}
                 />
               )}
               <SaveResultButton result={result} media={media} />

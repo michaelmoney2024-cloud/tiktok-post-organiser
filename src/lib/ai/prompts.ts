@@ -1,45 +1,55 @@
-import type { Country, Niche, ToolkitTool } from "@/lib/types";
-
-export const COUNTRY_GUIDANCE: Record<Country, string> = {
-  Nigeria:
-    "Target Nigerian TikTok audiences. Use Naija-friendly tone where natural. Reference Nigerian culture, cities, Afrobeats, Nollywood, and local creator styles.",
-  Canada:
-    "Target Canadian TikTok audiences. Use Canadian cultural references, bilingual awareness where relevant, and Canadian lifestyle trends.",
-  USA:
-    "Target US TikTok audiences. Use American pop culture references, US trending formats, and direct punchy delivery.",
-  UK:
-    "Target UK TikTok audiences. Use British humor, UK slang where natural, and UK TikTok trends.",
-  "South Africa":
-    "Target South African TikTok audiences. Use Mzansi-friendly tone, local cultural references, and SA creator trends.",
-};
-
-export const NICHE_GUIDANCE: Record<Niche, string> = {
-  Comedy:
-    "Comedy lens: punchlines, relatable humor, skit-style hooks, meme references, and funny POV angles.",
-  Lifestyle:
-    "Lifestyle lens: daily routines, aesthetics, self-care, vlogs, relatable moments, and aspirational vibes.",
-  Business:
-    "Business lens: value-driven hooks, tips, behind-the-scenes, motivation, and actionable insights.",
-  Gaming:
-    "Gaming lens: hype moments, clutch plays, reactions, game references, and streamer energy.",
-  Fashion:
-    "Fashion lens: outfit details, styling tips, trends, GRWM energy, and visual appeal.",
-  Sports:
-    "Sports lens: athletic moments, training, game day energy, highlights, and competitive spirit.",
-  Music:
-    "Music lens: artist energy, performance vibes, sound trends, lyrical hooks, and musical moments.",
-};
+import type { Country, Niche } from "@/lib/types";
+import { getCountryGuidance, getNicheGuidance } from "@/lib/audience";
+import type { ToolkitTool } from "@/lib/types";
 
 function baseContext(country: Country, niche: Niche, topic: string): string {
   return `You are a top-tier TikTok growth strategist for ${niche} creators in ${country}.
 
 Country targeting (${country}):
-${COUNTRY_GUIDANCE[country]}
+${getCountryGuidance(country)}
 
 Niche targeting (${niche}):
-${NICHE_GUIDANCE[niche]}
+${getNicheGuidance(niche)}
 
 Content topic/context: ${topic || "General content for this niche"}`;
+}
+
+export function buildImageAnalysisPrompt(country: Country, niche: Niche): string {
+  return `You are a top-tier TikTok growth strategist who has helped ${niche} creators go viral in ${country}. Analyze the uploaded media and produce scroll-stopping, algorithm-friendly content for the ${niche} niche, specifically for a ${country} audience.
+
+Study the image carefully: subject, mood, colors, setting, action, and how it fits the ${niche} niche. Tailor every output to what you actually see — never generic filler.
+
+Country targeting (${country}):
+${getCountryGuidance(country)}
+
+Niche targeting (${niche}):
+${getNicheGuidance(niche)}
+
+Return JSON with exactly this shape:
+{
+  "viralHook": "A punchy 1-2 sentence hook for the first 3 seconds that stops the scroll. Use curiosity, tension, or a bold claim. Speak directly to the viewer in a way that resonates with ${country} ${niche} audiences.",
+  "captions": [
+    "Caption option 1 — distinct angle (e.g. storytelling)",
+    "Caption option 2 — distinct angle (e.g. humor)",
+    "Caption option 3 — distinct angle (e.g. educational)",
+    "Caption option 4 — distinct angle (e.g. relatable POV)",
+    "Caption option 5 — distinct angle (e.g. call-to-action)"
+  ],
+  "hashtags": ["#tag1", "#tag2", ... exactly 20 tags],
+  "contentIdeas": [
+    "Follow-up video idea 1 with a clear concept",
+    "Follow-up video idea 2 with a clear concept",
+    "Follow-up video idea 3 with a clear concept"
+  ]
+}
+
+Rules:
+- viralHook: max 2 sentences, no hashtags, designed to be spoken or shown as on-screen text in the first 3 seconds. Must feel native to ${country} ${niche} TikTok.
+- captions: exactly 5 options, each 2-4 sentences, each with a different tone/angle suited to ${niche}. Use emojis naturally but don't overdo it. No hashtags inside captions. Language and references must feel authentic to ${country} viewers.
+- hashtags: exactly 20 tags, all starting with #. Include at least 5 country-specific tags for ${country}, at least 5 ${niche}-specific community tags, plus content-relevant niche tags. Mix broad, niche, and discovery tags.
+- contentIdeas: exactly 3 actionable follow-up video concepts for ${niche} creators, relevant to ${country} audiences.
+
+Write like a real ${country} ${niche} creator, not a brand. Be specific to what's in the image. Optimize for watch time, saves, and shares in the ${niche} niche on ${country} TikTok.`;
 }
 
 export function buildToolkitPrompt(
@@ -113,10 +123,10 @@ You are analyzing a TikTok video through ${frameLabels.length} key frames captur
 Study ALL frames together to understand the full video narrative: opening hook potential, pacing, visual story arc, subject, mood, colors, setting, action, and how it fits the ${niche} niche. Never give generic filler — be specific to what you see across the frames.
 
 Country targeting (${country}):
-${COUNTRY_GUIDANCE[country]}
+${getCountryGuidance(country)}
 
 Niche targeting (${niche}):
-${NICHE_GUIDANCE[niche]}
+${getNicheGuidance(niche)}
 
 Return JSON with exactly this shape:
 {

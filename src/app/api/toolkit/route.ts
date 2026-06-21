@@ -1,24 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
+import { isValidCountry, isValidNiche, normalizeNiche } from "@/lib/audience";
 import {
-  COUNTRIES,
-  NICHES,
   TOOLKIT_TOOLS,
-  type Country,
-  type Niche,
   type PostingTimeRecommendation,
   type ToolkitResult,
   type ToolkitTool,
 } from "@/lib/types";
 import { getOpenAIClient } from "@/lib/ai/client";
 import { buildToolkitPrompt } from "@/lib/ai/prompts";
-
-function isValidCountry(value: unknown): value is Country {
-  return typeof value === "string" && COUNTRIES.includes(value as Country);
-}
-
-function isValidNiche(value: unknown): value is Niche {
-  return typeof value === "string" && NICHES.includes(value as Niche);
-}
 
 function isValidTool(value: unknown): value is ToolkitTool {
   return typeof value === "string" && TOOLKIT_TOOLS.includes(value as ToolkitTool);
@@ -57,7 +46,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid country selected" }, { status: 400 });
     }
     if (!isValidNiche(niche)) {
-      return NextResponse.json({ error: "Invalid niche selected" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Please enter a content niche (2–60 characters)" },
+        { status: 400 },
+      );
     }
     if (tool !== "posting-times" && typeof topic === "string" && topic.trim().length === 0) {
       return NextResponse.json(
@@ -67,7 +59,8 @@ export async function POST(request: NextRequest) {
     }
 
     const openai = getOpenAIClient();
-    const prompt = buildToolkitPrompt(tool, country, niche, topic.trim());
+    const nicheLabel = normalizeNiche(niche);
+    const prompt = buildToolkitPrompt(tool, country, nicheLabel, topic.trim());
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o",
@@ -92,7 +85,7 @@ export async function POST(request: NextRequest) {
     const result: ToolkitResult = {
       tool,
       country,
-      niche,
+      niche: nicheLabel,
       topic: topic.trim(),
     };
 

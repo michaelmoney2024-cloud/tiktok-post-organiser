@@ -18,7 +18,7 @@ import {
 
 export default function ToolkitPage() {
   const [selectedTool, setSelectedTool] = useState<ToolkitTool>("captions");
-  const [country, setCountry] = useState<Country>("USA");
+  const [country, setCountry] = useState<Country>("United States");
   const [niche, setNiche] = useState<Niche>("Lifestyle");
   const [topic, setTopic] = useState("");
   const [result, setResult] = useState<ToolkitResult | null>(null);

@@ -1,25 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import type OpenAI from "openai";
-import {
-  COUNTRIES,
-  NICHES,
-  type AnalysisResult,
-  type Country,
-  type Niche,
-} from "@/lib/types";
+import { isValidCountry, isValidNiche, normalizeNiche } from "@/lib/audience";
+import type { AnalysisResult, Country, Niche } from "@/lib/types";
 import { getOpenAIClient } from "@/lib/ai/client";
 import { buildVideoStrategyPrompt } from "@/lib/ai/prompts";
 
 const MAX_FILE_SIZE = 20 * 1024 * 1024;
 const MAX_FRAMES = 5;
-
-function isValidCountry(value: string | null): value is Country {
-  return typeof value === "string" && COUNTRIES.includes(value as Country);
-}
-
-function isValidNiche(value: string | null): value is Niche {
-  return typeof value === "string" && NICHES.includes(value as Niche);
-}
 
 function validateVideoResult(
   data: unknown,
@@ -73,8 +60,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid country selected" }, { status: 400 });
     }
     if (!isValidNiche(nicheInput)) {
-      return NextResponse.json({ error: "Invalid niche selected" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Please enter a content niche (2–60 characters)" },
+        { status: 400 },
+      );
     }
+
+    const country = countryInput as Country;
+    const niche = normalizeNiche(nicheInput) as Niche;
 
     const frames = formData.getAll("frames") as File[];
     if (frames.length === 0) {
@@ -103,8 +96,6 @@ export async function POST(request: NextRequest) {
       frameLabels.push(`Frame ${frameLabels.length + 1}`);
     }
 
-    const country = countryInput;
-    const niche = nicheInput;
     const openai = getOpenAIClient();
 
     const userContent: OpenAI.Chat.Completions.ChatCompletionContentPart[] = [

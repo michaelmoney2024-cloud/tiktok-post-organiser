@@ -1,6 +1,7 @@
 "use client";
 
-import { NICHES, type Niche } from "@/lib/types";
+import { SUGGESTED_NICHES } from "@/lib/audience";
+import type { Niche } from "@/lib/types";
 
 interface NicheSelectProps {
   value: Niche;
@@ -8,7 +9,7 @@ interface NicheSelectProps {
   disabled?: boolean;
 }
 
-const NICHE_ICONS: Record<Niche, string> = {
+const NICHE_ICONS: Record<string, string> = {
   Comedy: "😂",
   Lifestyle: "✨",
   Business: "💼",
@@ -16,6 +17,14 @@ const NICHE_ICONS: Record<Niche, string> = {
   Fashion: "👗",
   Sports: "⚽",
   Music: "🎵",
+  Food: "🍳",
+  Travel: "✈️",
+  Beauty: "💄",
+  Fitness: "💪",
+  Education: "📚",
+  Tech: "💻",
+  Dance: "💃",
+  Pets: "🐾",
 };
 
 export function NicheSelect({ value, onChange, disabled }: NicheSelectProps) {
@@ -24,28 +33,36 @@ export function NicheSelect({ value, onChange, disabled }: NicheSelectProps) {
       <label htmlFor="niche" className="block text-sm font-medium text-white/70">
         Content niche
       </label>
-      <div className="relative">
-        <select
-          id="niche"
-          value={value}
-          onChange={(e) => onChange(e.target.value as Niche)}
-          disabled={disabled}
-          className="w-full appearance-none rounded-xl border border-white/10 bg-white/5 py-3 pl-4 pr-10 text-sm font-medium text-white transition focus:border-[#25f4ee]/50 focus:outline-none focus:ring-2 focus:ring-[#25f4ee]/20 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {NICHES.map((niche) => (
-            <option key={niche} value={niche} className="bg-[#1a1a1a] text-white">
-              {NICHE_ICONS[niche]} {niche}
-            </option>
-          ))}
-        </select>
-        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-white/40">
-          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-          </svg>
-        </div>
+      <input
+        id="niche"
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        disabled={disabled}
+        placeholder="Type any niche (e.g. Cooking, ASMR, Finance...)"
+        maxLength={60}
+        className="w-full rounded-xl border border-white/10 bg-white/5 py-3 px-4 text-sm font-medium text-white transition placeholder:text-white/30 focus:border-[#25f4ee]/50 focus:outline-none focus:ring-2 focus:ring-[#25f4ee]/20 disabled:cursor-not-allowed disabled:opacity-50"
+      />
+      <div className="flex flex-wrap gap-2">
+        {SUGGESTED_NICHES.map((niche) => (
+          <button
+            key={niche}
+            type="button"
+            disabled={disabled}
+            onClick={() => onChange(niche)}
+            className={`rounded-full border px-3 py-1 text-xs font-medium transition disabled:cursor-not-allowed disabled:opacity-50 ${
+              value.toLowerCase() === niche.toLowerCase()
+                ? "border-[#25f4ee]/40 bg-[#25f4ee]/15 text-[#25f4ee]"
+                : "border-white/10 bg-white/5 text-white/60 hover:border-white/20 hover:text-white"
+            }`}
+          >
+            {NICHE_ICONS[niche] ?? "✨"} {niche}
+          </button>
+        ))}
       </div>
       <p className="text-xs text-white/40">
-        Content styled for the {value.toLowerCase()} niche
+        Type any niche or pick a suggestion — content styled for{" "}
+        {value.trim() || "your niche"}
       </p>
     </div>
   );
