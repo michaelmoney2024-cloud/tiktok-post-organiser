@@ -1,0 +1,32 @@
+import type { Metadata, Viewport } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
+
+export const metadata: Metadata = {
+  title: "TikTok Post Organizer",
+  description:
+    "Upload images or videos and get AI-generated TikTok captions, hashtags, and content ideas.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#0f0f0f",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en" className={`${inter.variable} h-full`}>
+      <body className="min-h-full font-sans antialiased">{children}</body>
+    </html>
+  );
+}
