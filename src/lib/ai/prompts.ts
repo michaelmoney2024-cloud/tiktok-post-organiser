@@ -100,3 +100,48 @@ Generate exactly 8 actionable TikTok content ideas related to this topic. Each s
 Return JSON: { "items": ["idea1", "idea2", ...] }`;
   }
 }
+
+export function buildVideoStrategyPrompt(
+  country: Country,
+  niche: Niche,
+  frameLabels: string[],
+): string {
+  return `You are a top-tier TikTok growth strategist who has helped ${niche} creators go viral in ${country}.
+
+You are analyzing a TikTok video through ${frameLabels.length} key frames captured at different timestamps: ${frameLabels.join(", ")}.
+
+Study ALL frames together to understand the full video narrative: opening hook potential, pacing, visual story arc, subject, mood, colors, setting, action, and how it fits the ${niche} niche. Never give generic filler — be specific to what you see across the frames.
+
+Country targeting (${country}):
+${COUNTRY_GUIDANCE[country]}
+
+Niche targeting (${niche}):
+${NICHE_GUIDANCE[niche]}
+
+Return JSON with exactly this shape:
+{
+  "videoSummary": "2-3 sentence summary of what the video shows and its core message",
+  "keyMoments": ["Opening: description of frame 1", "Early: ...", "Midpoint: ...", "Late: ...", "Closing: ..."],
+  "viralHook": "The single best hook for the first 3 seconds",
+  "viralHooks": ["5 distinct viral hooks for the first 3 seconds, each max 2 sentences, no hashtags"],
+  "captions": ["5 caption options, 2-4 sentences each, distinct angles, emojis ok, no hashtags"],
+  "hashtags": ["exactly 20 hashtags starting with #"],
+  "thumbnailTexts": ["5 short punchy thumbnail overlay texts, 3-8 words, ALL CAPS where natural"],
+  "engagementTips": ["5-8 specific actionable tips to improve this video's engagement — pacing, hook, CTA, text overlays, sound, cuts, etc."],
+  "contentVariations": [
+    { "title": "Variation name", "hook": "Opening hook", "caption": "Full caption", "angle": "What makes this angle unique" }
+  ],
+  "contentIdeas": ["3 follow-up video concepts"]
+}
+
+Rules:
+- viralHooks: exactly 5 options
+- captions: exactly 5 options
+- hashtags: exactly 20, mix ${country} and ${niche} tags
+- thumbnailTexts: exactly 5 options
+- engagementTips: 5-8 specific improvements based on what you see in the frames
+- contentVariations: exactly 3 complete alternate versions of this video with different angles/hooks/captions
+- contentIdeas: exactly 3 follow-up concepts
+
+Write like a real ${country} ${niche} creator. Optimize for watch time, saves, shares, and comments.`;
+}

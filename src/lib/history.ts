@@ -115,6 +115,9 @@ export function getHistoryPreview(item: SavedResult): string {
     }
     return toolResult.topic;
   }
+  if (item.result.isVideoStrategy && item.result.videoSummary) {
+    return item.result.videoSummary;
+  }
   return item.result.viralHook;
 }
 

@@ -20,6 +20,13 @@ export const NICHES = [
 
 export type Niche = (typeof NICHES)[number];
 
+export interface ContentVariation {
+  title: string;
+  hook: string;
+  caption: string;
+  angle: string;
+}
+
 export interface AnalysisResult {
   country: Country;
   niche: Niche;
@@ -27,6 +34,13 @@ export interface AnalysisResult {
   captions: string[];
   hashtags: string[];
   contentIdeas: string[];
+  isVideoStrategy?: boolean;
+  videoSummary?: string;
+  keyMoments?: string[];
+  viralHooks?: string[];
+  thumbnailTexts?: string[];
+  engagementTips?: string[];
+  contentVariations?: ContentVariation[];
 }
 
 export type UploadMediaType = "image" | "video";

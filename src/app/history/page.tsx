@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { AppNav } from "@/components/AppNav";
 import { ResultsPanel } from "@/components/ResultsPanel";
+import { VideoStrategyDashboard } from "@/components/VideoStrategyDashboard";
 import { ToolkitResults } from "@/components/ToolkitResults";
 import {
   clearHistory,
@@ -156,6 +157,7 @@ export default function HistoryPage() {
                         {!isToolkit && (
                           <span className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] font-medium capitalize text-white/40">
                             {item.mediaType}
+                            {item.result.isVideoStrategy ? " · strategy" : ""}
                           </span>
                         )}
                       </div>
@@ -183,6 +185,8 @@ export default function HistoryPage() {
                     <div className="border-t border-white/10 p-4 sm:p-5">
                       {isToolkit ? (
                         <ToolkitResults result={item.toolResult} hideSave />
+                      ) : item.result.isVideoStrategy ? (
+                        <VideoStrategyDashboard result={item.result} />
                       ) : (
                         <ResultsPanel result={item.result} />
                       )}

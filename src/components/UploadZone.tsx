@@ -148,7 +148,7 @@ export function UploadZone({ media, onMediaSelect, onClear, disabled }: UploadZo
           {isDragging ? "Drop it here!" : "Drag & drop your media"}
         </p>
         <p className="mt-1 text-sm text-white/50">
-          or tap to browse · JPG, PNG, WebP, MP4, WebM
+          or tap to browse · JPG, PNG, WebP, MP4, WebM · Videos get full AI strategy
         </p>
       </div>
     </div>
