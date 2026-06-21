@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { AppNav } from "@/components/AppNav";
 import { AppHeader } from "@/components/AppHeader";
+import { AppFooter } from "@/components/AppFooter";
 import { AppLogo } from "@/components/AppLogo";
 import { ResultsPanel } from "@/components/ResultsPanel";
 import { VideoStrategyDashboard } from "@/components/VideoStrategyDashboard";
@@ -200,6 +201,8 @@ export default function HistoryPage() {
             })}
           </div>
         )}
+
+        <AppFooter />
       </div>
     </div>
   );

@@ -3,6 +3,7 @@
 import { useCallback, useState } from "react";
 import { AppNav } from "@/components/AppNav";
 import { AppHeader } from "@/components/AppHeader";
+import { AppFooter } from "@/components/AppFooter";
 import { CountrySelect } from "@/components/CountrySelect";
 import { NicheSelect } from "@/components/NicheSelect";
 import { ToolCard } from "@/components/ToolCard";
@@ -177,9 +178,7 @@ export default function ToolkitPage() {
           {result && <ToolkitResults result={result} />}
         </main>
 
-        <footer className="mt-12 text-center text-xs text-white/30">
-          All outputs can be copied or saved to history
-        </footer>
+        <AppFooter note="All outputs can be copied or saved to history" />
       </div>
     </div>
   );

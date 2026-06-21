@@ -9,6 +9,7 @@ import { CountrySelect } from "@/components/CountrySelect";
 import { NicheSelect } from "@/components/NicheSelect";
 import { AppNav } from "@/components/AppNav";
 import { AppHeader } from "@/components/AppHeader";
+import { AppFooter } from "@/components/AppFooter";
 import { SaveResultButton } from "@/components/SaveResultButton";
 import {
   extractVideoKeyframes,
@@ -293,9 +294,7 @@ export default function Home() {
           )}
         </main>
 
-        <footer className="mt-12 text-center text-xs text-white/30">
-          Supports images &amp; videos · Max 20MB · Advanced multi-frame video analysis
-        </footer>
+        <AppFooter note="Supports images & videos · Max 20MB · Advanced multi-frame video analysis" />
       </div>
     </div>
   );
